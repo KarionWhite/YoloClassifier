@@ -41,7 +41,8 @@ Sollte bei der ausführung der APP
 ```sh
 WARNING - CUDA is not available. Expect reduced performance.
 ```
-kommen, so emphele ich folgende Schritte innerhalb der Conda Umgebung:
+kommen, Sie aber eine CUDA fähige Grafikkarte haben,
+so emphele ich folgende Schritte innerhalb der Conda Umgebung:
 1. **PyTorch deinstallieren:**
     ```sh
     conda uninstall pytorch
