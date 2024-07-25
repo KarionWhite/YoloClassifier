@@ -1,0 +1,71 @@
+.card-container {
+    margin-left: 0;
+}
+
+.card-container .card {
+    background-color: #222222;
+    color: #eeeeee;
+    border: 1px solid #eeeeee;
+}
+
+#newcard {
+    background-color: black;
+    color: #ff7777;
+    border: 1px solid #eeeeee;
+}
+
+.card-container .card {
+    transition: transform 0.3s ease, background-color 0.3s ease; /* Übergänge für Transformierung und Hintergrundfarbe */
+}
+
+.protitel { /* Stil für den Projekttitel */
+    font-size: 2em;
+    font-weight: bold;
+    color: white;     /* Weiße Schrift */
+    margin-bottom: 10px; 
+}
+
+.prodesc { /* Stil für die Projektbeschreibung */
+    color: #ccc;     /* Hellgraue Schrift */
+    margin-bottom: 20px; 
+}
+
+.prolabel { /* Stil für die Labels */
+    color: #ff7777; /* Rosa Labels */
+    font-weight: bold;
+}
+
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 10%));
+    gap: 1px; /* Abstand zwischen den Bildern */
+}
+
+.image-gallery img {
+    width: auto;
+    height: auto; 
+}
+
+.project-show {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-container .card:hover {
+    transform: scale(1.05); /* Vergrößern beim Hover */
+    background-color: #333; /* Blasserer Hintergrund beim Hover */
+}
+
+#newcard:hover {
+    transform: scale(1.05); /* Vergrößern beim Hover */
+    background-color: #222; /* Blasserer Hintergrund beim Hover */
+}
+
+.my-img{
+    transition: transform 0.3s ease; /* Übergänge für Transformierung */
+}
+
+.my-img:hover {
+    transform: scale(2); /* Vergrößern beim Hover */
+}

@@ -1,0 +1,24 @@
+name: Yolo_Klassifikation
+channels:
+  - pytorch
+  - nvidia
+dependencies:
+  - python=3.11
+  - numpy
+  - opencv
+  - flask
+  - pytorch
+  - torchvision
+  - torchaudio
+  - cudatoolkit=11.8
+  - pip
+  - pip:
+    - flask
+    - flask-cors
+    - flask-restful
+    - flask-restx 
+    - flask-swagger-ui
+    - requests
+    - opencv-python
+    - pytorch_wavelets
+    - PyWavelets

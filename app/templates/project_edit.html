@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+
+{% block title %}Yolo Projekt editieren{% endblock %}
+
+{% block content %}
+<div class="container mt-4 dark">
+    <h1 class="protitel">Editiere {{project.name}}</h1>
+    <form id="newProjectForm" method="POST" action="{{ url_for('edit_project', project_id=project.id) }}">
+        <div class="mb-3">
+            <label for="projectName" class="form-label text-light">Projektname:</label>
+            <input type="text" class="form-control" id="projectName" name="name" value="{{project.name}}" required>
+        </div>
+        <div class="mb-3">
+            <label for="projectDescription" class="form-label text-light">Beschreibung:</label>
+            <textarea class="form-control" id="projectDescription" name="description">{{project.description}}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="projectLabels" class="form-label text-light">Labels (durch Komma getrennt):</label>
+            <input type="text" class="form-control" id="projectLabels" name="labels" value="{{project.labels}}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Edit</button>
+    </form>
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="btn-group">
+            <a href="{{ url_for('upload_image', project_id=project.id) }}" class="btn btn-secondary">Bilder hochladen</a>
+            <a href="{{ url_for('classify_project_form', project_id=project.id) }}" class="btn btn-secondary">Bilder klassifizieren</a>
+        </div>
+        <div class="btn-group">
+            <a href="{{ url_for('delete_project', project_id=project.id) }}" class="btn btn-danger" id="delete_project">Löschen</a>
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">Zurück</a> 
+        </div>
+    </div>
+</div>
+{% endblock %}

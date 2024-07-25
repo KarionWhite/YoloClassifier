@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block title %}Neues YOLO Projekt erstellen{% endblock %}
+
+{% block content %}
+<div class="container mt-4 dark">
+    <h1 class="protitel">Neues YOLO Projekt erstellen</h1>
+    <form id="newProjectForm" method="POST" action="{{ url_for('new_project') }}">
+        <div class="mb-3">
+            <label for="projectName" class="form-label text-light">Projektname:</label>
+            <input type="text" class="form-control" id="projectName" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="projectDescription" class="form-label text-light">Beschreibung:</label>
+            <textarea class="form-control" id="projectDescription" name="description"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="projectLabels" class="form-label text-light">Labels (durch Komma getrennt):</label>
+            <input type="text" class="form-control" id="projectLabels" name="labels" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Projekt erstellen</button>
+    </form>
+</div>
+{% endblock %}

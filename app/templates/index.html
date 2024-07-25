@@ -1,0 +1,24 @@
+{%extends 'layout.html'%}
+
+{%block title %}Indexseite{%endblock%}
+{%block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}">
+<script src="{{url_for('static', filename='js/index.js')}}"></script>
+{%endblock%}
+{% block content %}
+<div class="row row-cards">
+    <div class="col-md-2">
+        <div class="card-container">
+            <div class="card rounded-card" data-yolo-model="new" id="newcard">
+                <h3>Neues YOLO erstellen</h3>
+            </div>
+            {% for yolo_project in yolo_projects %}
+            <div class="card rounded-card" data-yolo-model="{{yolo_project.id}}">
+                <h3>{{yolo_project.name}}</h3>
+            </div>
+            {% endfor %}
+    </div>
+</div>
+<div class="col-md-10" id="yoloDetails">
+</div>
+{% endblock %}

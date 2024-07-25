@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %}Bilder hochladen{% endblock %}
+{% block head %}
+<script src="{{ url_for('static', filename='js/project_upload.js')}}"></script>
+{% endblock %}
+{% block content %}
+<div class="container mt-4 dark">
+    <h1 class="protitel">Bilder hochladen für Projekt: {{ project.name }}</h1>
+
+    <form id="uploadForm" method="POST" action="{{ url_for('upload_images',project_id=project.id) }}" enctype="multipart/form-data" multiple accept=".png,.jpg,.jpeg,.gif,.zip">
+        <input type="hidden" name="project_id" value="{{ project.id }}">
+
+        <div class="mb-3">
+            <label for="images" class="form-label text-light">Bilder auswählen (oder Ordner per Drag & Drop):</label>
+            <input type="file" class="form-control" id="images" name="images" multiple>
+        </div>
+
+        <div class="progress mb-3" style="display: none;">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div id="uploadStatus"></div> <div id="uploadStatus"></div> 
+
+        <button type="submit" class="btn btn-primary">Hochladen</button>
+    </form>
+    <button id="back" class="btn btn-secondary" onclick="window.location.href='{{ url_for('edit_project_form', project_id=project.id) }}'">Zurück</button>
+    <button id="classify" class="btn btn-secondary" onclick="window.location.href='{{ url_for('classify_project_form', project_id=project.id) }}'">Kassifiziere Bilder</button>
+</div>
+{% endblock %}
