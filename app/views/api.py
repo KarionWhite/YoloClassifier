@@ -120,20 +120,44 @@ def classify_current_image(project_id):
     
 
 @app.route('/api/classify/next_image/<project_id>', methods=['GET'])
-def classify_next_image(prohect_id):
-    my_image = ClientImages.get_client(prohect_id)
+def classify_next_image(project_id):
+    my_image = ClientImages.get_client(project_id)
     next_image_path = my_image.get_next_image_path()
     directory, filename = os.path.split(next_image_path)
+    my_image.set_next_image()
     response = send_from_directory(directory, filename)
     response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache für 1 Tag
     return response, 200, {'label': filename}
 
-@app.route('/api/classify/last_image/<project_id>', methods=['POST'])
+@app.route('/api/classify/last_image/<project_id>', methods=['GET'])
 def classify_last_image(project_id):
     my_image = ClientImages.get_client(project_id)
     last_image_path = my_image.get_last_image_path()
     directory, filename = os.path.split(last_image_path)
+    my_image.set_last_image()
     response = send_from_directory(directory, filename)
     response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache für 1 Tag
     return response, 200, {'label': filename}
     
+@app.route('/api/classify/max/<project_id>', methods=['GET'])
+def get_max(project_id):
+    my_image = ClientImages.get_client(project_id)
+    mymax = my_image.getmax()
+    return jsonify({"max":mymax}), 201
+
+@app.route('/api/classify/reset/<project_id>', methods=['DELETE'])
+def reset(project_id):
+    deleted = ClientImages.delete_client(project_id)
+    if deleted:
+        return {}, 201
+    else:
+        return {}, 422
+    
+@app.route('/api/classify/currentLabel/<project_id>', methods=['POST'])
+def sync_label(project_id):
+    my_image = ClientImages.get_client(project_id)
+    byte_data = request.data
+    json_str = byte_data.decode('utf-8')
+    data_dict = json.loads(json_str)
+    my_image.set_current_label(data_dict['label'])
+    return {}, 201

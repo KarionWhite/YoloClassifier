@@ -62,5 +62,6 @@ def classify_project_form(project_id):
     myProject = get_project_by_id(project_id)
     if myProject == {}:
         abort(404)
-    ClientImages.get_client(project_id)
-    return render_template('project_classify.html', project=myProject)
+    myclient_images = ClientImages.get_client(project_id)
+    max_images = myclient_images.getmax()
+    return render_template('project_classify.html', project=myProject, max_images=max_images)

@@ -404,6 +404,13 @@ class ClientImages:
         if project_id in cls.myClients:
             return cls.myClients[project_id]
         return cls(project_id)
+    
+    @classmethod
+    def delete_client(cls, project_id:str)->bool:
+        if project_id in cls.myClients:
+            del cls.myClients[project_id]
+            return True
+        return False
         
     def init_images(self):
         images = self.load_images()
@@ -444,12 +451,12 @@ class ClientImages:
     
     def get_next_image_path(self)->str:
         if self.current+1 >= len(self.image_paths):
-            return self.image_paths[0]['path']
+            return self.get_absolute_path(self.image_paths[0]['path'])
         return self.get_absolute_path(self.image_paths[self.current+1]['path'])
         
     def get_last_image_path(self)->str:
         if self.current-1 < 0:
-            return self.image_paths[-1]['path']
+            return self.get_absolute_path(self.image_paths[-1]['path'])
         return self.get_absolute_path(self.image_paths[self.current-1]['path'])
     
     def set_next_image(self):
@@ -464,19 +471,30 @@ class ClientImages:
             self.current = len(self.image_paths)-1
         return self.get_image_labels()
     
+    def set_current_label(self, label:str):
+        for i, image in enumerate(self.image_paths):
+            if image['label'] == label:
+                self.current = i
+                return self.get_image_labels()
+    
     def get_absolute_path(self, path: str) -> str:
         if "static" in path or os.path.isabs(path):  # Überprüfen, ob der Pfad absolut ist
             return path
+        my_path = path.split('/')
         path_splitted = self.myProject['path'].split('/')
+        path_splitted = path_splitted + my_path
         project_path = os.getcwd()
         for path in path_splitted:
             project_path = os.path.join(project_path, path)
         if not os.path.exists(project_path):
             return self.return_error_image()
-        return os.path.join(project_path, path)
+        return project_path
     
     def return_error_image(self)->str:
         return os.path.join(os.getcwd(),"app","static","img","image_not_found.jpg")
+    
+    def getmax(self)->int:
+        return len(self.image_paths)
 
     
     
