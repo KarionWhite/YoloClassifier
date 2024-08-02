@@ -1,5 +1,5 @@
 from ..app import app
-from flask import jsonify, abort, url_for, request
+from flask import jsonify, abort, send_from_directory, url_for, request
 from app.views.projectcare import get_projects, get_project_by_id, save_projects, init_project, save_project, save_labels,delete_project_with_id,UPLOADER,ClientImages
 import logging
 import shutil
@@ -109,18 +109,31 @@ def status_upload(project_id):
     
     return jsonify(ret), 201
 
+@app.route('/api/classify/current_image/<project_id>', methods=['GET'])
+def classify_current_image(project_id):
+    my_image = ClientImages.get_client(project_id)
+    current_image_path = my_image.get_current_image_path()
+    directory, filename = os.path.split(current_image_path)
+    response = send_from_directory(directory, filename)
+    response.headers['Cache-Control'] = 'no store'
+    return response, 200, {'label': filename}
+    
+
 @app.route('/api/classify/next_image/<project_id>', methods=['GET'])
 def classify_next_image(prohect_id):
     my_image = ClientImages.get_client(prohect_id)
-    new_last = my_image.get_image_path()
-    new_current = my_image.set_next_image()
-    new_next = my_image.get_image_path()
-    return {'last': new_last, 'current': new_current, 'next': new_next}, 200
+    next_image_path = my_image.get_next_image_path()
+    directory, filename = os.path.split(next_image_path)
+    response = send_from_directory(directory, filename)
+    response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache für 1 Tag
+    return response, 200, {'label': filename}
 
 @app.route('/api/classify/last_image/<project_id>', methods=['POST'])
 def classify_last_image(project_id):
     my_image = ClientImages.get_client(project_id)
-    new_last = my_image.get_image_path()
-    new_current = my_image.set_last_image()
-    new_next = my_image.get_image_path()
-    return {'last': new_last, 'current': new_current, 'next': new_next}, 200
+    last_image_path = my_image.get_last_image_path()
+    directory, filename = os.path.split(last_image_path)
+    response = send_from_directory(directory, filename)
+    response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache für 1 Tag
+    return response, 200, {'label': filename}
+    

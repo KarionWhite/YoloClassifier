@@ -413,10 +413,10 @@ class ClientImages:
         my_images.sort(key=lambda x: int(x['label'].split('.')[0].split('_')[1]))
         self.image_paths = new_uploads + my_images
         if len(self.image_paths) == 0:
-            self.image_paths = [{"path":os.path.join(os.getcwd(),"app","static","img","no_images.jpg")}]
+            self.image_paths = [{"path":os.path.join(os.getcwd(),"app","static","img","no_images.jpg"),"label":"no_images.jpg"}]
             
     def init_error_images(self):
-        self.image_paths = [{"path":os.path.join(os.getcwd(),"app","static","img","no_project.jpg")}]
+        self.image_paths = [{"path":os.path.join(os.getcwd(),"app","static","img","no_project.jpg"),"label":"no_project.jpg"}]
     
     def load_images(self)->list:
         self.images_json = os.path.join(self.myProject['path'], 'annotations', 'images.json')
@@ -425,6 +425,21 @@ class ClientImages:
         return images
     
     def get_image_path(self):
+        return self.get_absolute_path(self.image_paths[self.current]['path'])
+    
+    def get_image_labels(self)->list[str,str,str]:
+        current = self.current
+        last = self.current-1   #wenn current = 0 dann ist last = -1 -> letztes Bild ergo negatives overflow kann nicht passieren
+        next = self.current+1
+        if next >= len(self.image_paths):
+            next = 0
+        return [
+            self.image_paths[last]['label'],
+            self.image_paths[current]['label'],
+            self.image_paths[next]['label']
+        ]
+    
+    def get_current_image_path(self)->str:
         return self.get_absolute_path(self.image_paths[self.current]['path'])
     
     def get_next_image_path(self)->str:
@@ -441,18 +456,27 @@ class ClientImages:
         self.current += 1
         if self.current >= len(self.image_paths):
             self.current = 0
-        return self.get_image_path()
+        return self.get_image_labels()
     
     def set_last_image(self):
         self.current -= 1
         if self.current < 0:
             self.current = len(self.image_paths)-1
-        return self.get_image_path()
+        return self.get_image_labels()
     
     def get_absolute_path(self, path: str) -> str:
         if "static" in path or os.path.isabs(path):  # Überprüfen, ob der Pfad absolut ist
             return path
-        return os.path.join(os.getcwd(), self.myProject['path'], path)
+        path_splitted = self.myProject['path'].split('/')
+        project_path = os.getcwd()
+        for path in path_splitted:
+            project_path = os.path.join(project_path, path)
+        if not os.path.exists(project_path):
+            return self.return_error_image()
+        return os.path.join(project_path, path)
+    
+    def return_error_image(self)->str:
+        return os.path.join(os.getcwd(),"app","static","img","image_not_found.jpg")
 
     
     

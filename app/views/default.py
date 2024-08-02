@@ -42,36 +42,6 @@ def serve_project_image(project_id, image):
     response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache für 1 Tag
     return response
 
-@app.route('/classify_image/current/<project_id>/<image>')
-def classify_image(project_id, image):
-    myClient = ClientImages.get_client(project_id)
-    img_path = myClient.get_image_path()
-    if img_path == '' or not os.path.exists(img_path):
-        abort(404)
-    response = send_from_directory(img_path)
-    response.headers['Cache-Control'] = 'public, max-age=86400'
-    return response
-
-@app.route('/classify_image/last/<project_id>/<image>')
-def classify_image_last(project_id, image):
-    myClient = ClientImages.get_client(project_id)
-    img_path = myClient.get_last_image_path()
-    if img_path == '' or not os.path.exists(img_path):
-        abort(404)
-    response = send_from_directory(img_path)
-    response.headers['Cache-Control'] = 'public, max-age=86400'
-    return response
-
-@app.route('/classify_image/next/<project_id>/<image>')
-def classify_image_next(project_id, image):
-    myClient = ClientImages.get_client(project_id)
-    img_path = myClient.get_next_image_path()
-    if img_path == '' or not os.path.exists(img_path):
-        abort(404)
-    response = send_from_directory(img_path)
-    response.headers['Cache-Control'] = 'public, max-age=86400'
-    return response
-
 @app.route('/new_project')
 def new_project_form():
     return render_template('new_project.html')
