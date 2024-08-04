@@ -111,6 +111,7 @@ def status_upload(project_id):
 
 @app.route('/api/classify/current_image/<project_id>', methods=['GET'])
 def classify_current_image(project_id):
+    ClientImages.delete_client(project_id)
     my_image = ClientImages.get_client(project_id)
     current_image_path = my_image.get_current_image_path()
     directory, filename = os.path.split(current_image_path)

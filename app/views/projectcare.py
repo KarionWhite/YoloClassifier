@@ -496,5 +496,7 @@ class ClientImages:
     def getmax(self)->int:
         return len(self.image_paths)
 
+    def get_project_ai_labels(self)->list[str]:
+        return get_project_labels(self.project_id)
     
     

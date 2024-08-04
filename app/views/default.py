@@ -64,4 +64,5 @@ def classify_project_form(project_id):
         abort(404)
     myclient_images = ClientImages.get_client(project_id)
     max_images = myclient_images.getmax()
-    return render_template('project_classify.html', project=myProject, max_images=max_images)
+    my_labels = get_project_labels(project_id)
+    return render_template('project_classify.html', project=myProject, max_images=max_images, labels=my_labels)

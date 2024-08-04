@@ -4,21 +4,27 @@
   Klassifikation
 {% endblock %}
 {% block head %}
-  <script src="{{ url_for('static', filename='js/project_classify.js') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='js/project_classify.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/project_classify.css') }}" />
 {% endblock %}
 {% block content %}
   <div class="container">
     <div class="row">
+      <div class="col-md-12 mb-3 text-center justify-content-center">
+        <select id="label-select" class="form-select">
+            {% for label in labels %}
+                <option value="{{ label }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+      </div>
       <div class="col-md-2 d-flex flex-column justify-content-center">
         <svg id="prev-image-btn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16" role="button" tabindex="0" display="none">
           <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
         </svg>
       </div>
-      <div class="col-md-8" id="myImage" data-max-Images="{{max_images}}">
+      <div class="col-md-8">
         <div class="image-container">
-          <img id="image-display" src="" alt="Bild" class="img-fluid" />
-          <canvas id="drawing-canvas"></canvas>
+          <canvas id="drawing-canvas" data-max-Images="{{max_images}}"></canvas>
         </div>
       </div>
       <div class="col-md-2 d-flex flex-column justify-content-center">
