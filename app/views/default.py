@@ -66,3 +66,10 @@ def classify_project_form(project_id):
     max_images = myclient_images.getmax()
     my_labels = get_project_labels(project_id)
     return render_template('project_classify.html', project=myProject, max_images=max_images, labels=my_labels)
+
+@app.route('/project/YOLO-training/<project_id>')
+def train_Yolo(project_id):
+    myProject = get_project_by_id(project_id)
+    if myProject == {}:
+        abort(404)
+    return render_template('project_train_yolo.html', project=myProject)

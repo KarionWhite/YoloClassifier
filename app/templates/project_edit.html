@@ -24,6 +24,7 @@
         <div class="btn-group">
             <a href="{{ url_for('upload_image', project_id=project.id) }}" class="btn btn-secondary">Bilder hochladen</a>
             <a href="{{ url_for('classify_project_form', project_id=project.id) }}" class="btn btn-secondary">Bilder klassifizieren</a>
+            <a href="{{ url_for('train_Yolo', project_id=project.id) }}" class="btn btn-secondary">Trainiere deine YOLO-KI!</a>
         </div>
         <div class="btn-group">
             <a href="{{ url_for('delete_project', project_id=project.id) }}" class="btn btn-danger" id="delete_project">Löschen</a>

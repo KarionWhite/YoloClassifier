@@ -384,10 +384,10 @@ class UPLOADER:
         if project_id in cls.uploaders:
             return cls.uploaders[project_id].get_status_log()
         return [{'error': 'Project not found'}]
-    
+
 class ClientImages:
     
-    myClients = {}
+    myClients:dict[str,"ClientImages"] = {}
     
     def __init__(self,project_id) -> None:
         self.project_id = project_id
@@ -406,11 +406,36 @@ class ClientImages:
         return cls(project_id)
     
     @classmethod
+    def has_client(cls, project_id:str)->bool:
+        return project_id in cls.myClients
+    
+    @classmethod
     def delete_client(cls, project_id:str)->bool:
         if project_id in cls.myClients:
             del cls.myClients[project_id]
             return True
         return False
+    
+    @classmethod
+    def set_current_as_classified_image(self,project_id:str)->bool:
+        if project_id in self.myClients:
+            my_image = self.myClients[project_id]
+            current_image_path = my_image.get_current_image_path()
+            try:
+                shutil.move(current_image_path, os.path.join(my_image.myProject['path'],'images',my_image.image_paths[my_image.current]['label']))
+                for img in my_image.image_paths:
+                    if img['label'] == my_image.image_paths[my_image.current]['label']:
+                        img['path'] = 'images/' + img['label']
+                        my_image.save_images()
+                        break
+                my_image.init_images()
+            except FileNotFoundError:
+                logging.error(f"Image not found: {current_image_path}")
+                return False
+            except PermissionError:
+                logging.error(f"Permission denied: {current_image_path}")
+                return False
+            return True
         
     def init_images(self):
         images = self.load_images()
@@ -430,6 +455,10 @@ class ClientImages:
         with open(self.images_json, 'r') as f:
             images:list = json.load(f)
         return images
+    
+    def save_images(self):
+        with open(self.images_json, 'w') as f:
+            json.dump(self.image_paths, f, indent=4)
     
     def get_image_path(self):
         return self.get_absolute_path(self.image_paths[self.current]['path'])
@@ -499,4 +528,5 @@ class ClientImages:
     def get_project_ai_labels(self)->list[str]:
         return get_project_labels(self.project_id)
     
+        
     

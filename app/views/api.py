@@ -1,6 +1,7 @@
 from ..app import app
 from flask import jsonify, abort, send_from_directory, url_for, request
 from app.views.projectcare import get_projects, get_project_by_id, save_projects, init_project, save_project, save_labels,delete_project_with_id,UPLOADER,ClientImages
+from app.views.Rectcare import Rectcare
 import logging
 import shutil
 import json
@@ -160,5 +161,38 @@ def sync_label(project_id):
     byte_data = request.data
     json_str = byte_data.decode('utf-8')
     data_dict = json.loads(json_str)
-    my_image.set_current_label(data_dict['label'])
+    #my_image.set_current_label(data_dict['label'])
+    return {}, 201
+
+@app.route('/api/classify/postrects/<project_id>', methods=['POST'])
+def post_rects(project_id):
+    my_image = ClientImages.get_client(project_id)
+    byte_data = request.data
+    json_str = byte_data.decode('utf-8')
+    data_dict = json.loads(json_str)
+    current_image = my_image.get_image_labels()[1]
+    if not 'rects' in data_dict:
+        logging.error(f"No rects in data_dict for image {current_image}")
+        return {}, 422
+    if data_dict['rects'] == []:     # wenn keine Rechtecke, dann nichts tun
+        return {}, 201
+    my_rectcare = Rectcare.get_client(project_id)
+    my_rectcare.save_rects(current_image, data_dict)
+    ClientImages.set_current_as_classified_image(project_id)
+    return {}, 201
+
+@app.route('/api/classify/receiveRects/<project_id>', methods=['GET'])
+def receive_rects(project_id):
+    my_image = ClientImages.get_client(project_id)
+    current_image = my_image.get_image_labels()[1]
+    my_rectcare = Rectcare.get_client(project_id)
+    rects = my_rectcare.get_current_rects(current_image)
+    return jsonify(rects), 201
+
+@app.route('/api/classify/deleteRects/<project_id>', methods=['DELETE'])
+def delete_rects(project_id):
+    my_image = ClientImages.get_client(project_id)
+    current_image = my_image.get_image_labels()[1]
+    my_rectcare = Rectcare.get_client(project_id)
+    my_rectcare.delete_rects(current_image)
     return {}, 201

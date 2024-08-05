@@ -19,6 +19,6 @@ dependencies:
     - flask-restx 
     - flask-swagger-ui
     - requests
-    - opencv-python
     - pytorch_wavelets
     - PyWavelets
+    - ultralytics

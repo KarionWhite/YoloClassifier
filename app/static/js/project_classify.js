@@ -5,7 +5,7 @@ $(document).ready(function() {
     const projectId = window.location.pathname.split('/')[3];
     const canvasId = "drawing-canvas";
     const imageManager = new ImageManager(canvasId, projectId);
-    $('#next-image-btn').click(function(event) {
+    $('#next-image-btn').click(function(event) {W
         event.preventDefault();
         imageManager.nextImage();
     });
@@ -17,7 +17,7 @@ $(document).ready(function() {
         imageManager.previousImage();
     });
     imageManager.addEventListener('image-updated', (event) => {
-        const currentImageIndex = event.detail.currentImageIndex;
+        const currentImageIndex = 1;
         if(currentImageIndex > 0){
             $('#prev-image-btn').show();
         } else {
@@ -53,5 +53,12 @@ $(document).ready(function() {
     imageManager.setLabel(labelSelect.value);   //Setze Label auf das erste in der Liste
     labelSelect.addEventListener("change", function(event){
         imageManager.setLabel(labelSelect.value);
+    });
+    //Button zum zurücksetzen der Rechtecke
+    $('#reset-rects-btn').click(function(event){
+        imageManager.deleteRects();
+    });
+    $('#back-to-edit-link').click(function(event){
+        imageManager.postRects();
     });
 });

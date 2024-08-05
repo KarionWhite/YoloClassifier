@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+  Klassifikation
+{% endblock %}
+{% block head %}
+  <script type="module" src="{{ url_for('static', filename='js/trainYolo.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/trainYolo.css') }}" />
+{% endblock %}
+{% block content %}
+    <div class="container mt-4 dark">
+        <h1 class="protitel">Trainiere deine YOLO-KI!</h1>
+        <form id="trainYoloForm" method="POST" action="{{ url_for('train_Yolo', project_id=project.id) }}">
+        <div class="mb-3">
+            <label for="trainYoloForm" class="form-label text-light">Trainiere deine YOLO-KI!</label>
+            <input type="text" class="form-control" id="trainYoloForm" name="trainYolo" value="{{project.trainYolo}}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Trainiere</button>
+        </form>
+    </div>
+{% endblock %}

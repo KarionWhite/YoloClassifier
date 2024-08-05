@@ -129,7 +129,8 @@ class ImageManager {
 
             if (endpoint === 'current_image') {
                 this.cachedImages.push(imageData);
-            } else if (endpoint === 'next_image' && myIndex < this.maxImages) {
+            } else if (endpoint === 'next_image' && myIndex < this.maxImages
+            ) {
                 this.cachedImages.push(imageData);
                 this.maxCacheIndex++;
             } else if (endpoint === 'last_image') {
@@ -167,10 +168,28 @@ class ImageManager {
         }
     }
 
-    async updateImage(endpoint = 'next_image') {
+    async updateImage(endpoint = 'next_image',caching = false) {
         try {
-            const { label, image } = await this.fromCache(endpoint);
-
+            let image
+            let label
+            if(caching){
+                let { mylabel, myimage } = await this.fromCache(endpoint);
+                image = myimage;
+                label = mylabel;
+            }
+            else{
+                let [mylabel, objectURL] = await this.fetchImages(endpoint);
+                label = mylabel;
+                image = new Image();
+                image.src = objectURL;
+                await new Promise(resolve => image.onload = resolve);
+                URL.revokeObjectURL(objectURL);
+                this.currentImageIndex = 0;
+                this.cachedImages.push({ label: label, image: image });
+                if(endpoint !== 'current_image'){
+                    this.cachedImages.shift();
+                }
+            }
             // Bild auf den Canvas zeichnen
             const ctx = this.canvasElement.getContext('2d');
             this.canvasElement.width = image.width;
@@ -178,17 +197,19 @@ class ImageManager {
             ctx.drawImage(image, 0, 0);
             
             this.dispatchEvent('image-updated', { label:label,image:image,currentImageIndex: this.currentImageIndex });
-
+            await this.receiveRects();
         } catch (error) {
             console.error('Fehler beim Aktualisieren des Bildes', error);
         }
     }
 
     async nextImage(){
+        await this.postRects();
         await this.updateImage('next_image');
     }
 
     async previousImage(){
+        await this.postRects();
         await this.updateImage('last_image');
     }
 
@@ -231,6 +252,12 @@ class ImageManager {
     //Server RectDrawing implementation
     async postRects(){
         const rects = this.rectDrawing.getRects();
+        const myrects = [];
+        rects.forEach((element) => {
+            if(element.color === 'red'){    //only save red rects because green rects are already saved
+                myrects.push(element);
+            }
+        });
         const response = await fetch(`/api/classify/postrects/${this.projectId}`, {
             method: 'POST',
             cache: 'no-store',
@@ -240,16 +267,45 @@ class ImageManager {
                 'Pragma': 'no-cache',
                 'Expires': '0'
             },
-            body: JSON.stringify({ rects: rects })
+            body: JSON.stringify({ rects: myrects })
         });
         if (!response.ok) {
             console.error("Fehler beim Speichern der Rechtecke");
             console.error(response.status);
         }
+        this.rectDrawing.resetRect();
     }
 
     async receiveRects(){
-        const response = await fetch(`/api/classify/receiverects/${this.projectId}`, {
+        const response = await fetch(`/api/classify/receiveRects/${this.projectId}`, {
+            method: 'GET',
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            },
+        });
+        if (!response.ok) {
+            console.error("Fehler beim Laden der Rechtecke");
+            console.error(response.status);
+        }
+        const rects = await response.json();
+        if (rects === undefined) {
+            this.rectDrawing.draw();
+            return;
+        }
+        if(rects.length === 0){
+            this.rectDrawing.draw();
+            return;
+        }
+        this.rectDrawing.setRects(rects, 'green');
+        this.rectDrawing.draw();
+    }
+
+    async deleteRects(){
+        const response = await fetch(`/api/classify/deleteRects/${this.projectId}`, {
+            method: 'DELETE',
             cache: 'no-store',
             headers: {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -258,11 +314,11 @@ class ImageManager {
             }
         });
         if (!response.ok) {
-            console.error("Fehler beim Laden der Rechtecke");
+            console.error("Fehler beim Löschen der Rechtecke");
             console.error(response.status);
         }
-        const rects = await response.json();
-        this.rectDrawing.setRects(rects);
+        this.rectDrawing.resetRect();
+        this.rectDrawing.clear();
         this.rectDrawing.draw();
     }
 

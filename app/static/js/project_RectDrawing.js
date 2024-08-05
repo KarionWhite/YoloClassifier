@@ -12,6 +12,7 @@ class RectDrawing{
         this.rects = [];
         this.image = null;
         this.labelHistory = [];
+        this.color = 'red';
         this.canvas.addEventListener('mousedown', this.mouseDown.bind(this));
         this.canvas.addEventListener('mouseup', this.mouseUp.bind(this));
         this.canvas.addEventListener('mousemove', this.mouseMove.bind(this));
@@ -24,6 +25,7 @@ class RectDrawing{
         this.startY = e.offsetY;
         this.rect = {};
         this.rect.label = this.labelCreation();
+        this.rect.color = this.color;
     }
 
     mouseUp(e){
@@ -100,9 +102,12 @@ class RectDrawing{
         if (this.image !== null) {
             this.ctx.drawImage(this.image, 0, 0);
         }
-        this.ctx.strokeStyle = 'red';
         this.ctx.lineWidth = 2;
         this.rects.forEach((rect, index) => {
+            if(rect.color === undefined){
+                rect.color = 'red';
+            }
+            this.ctx.strokeStyle = rect.color;
             this.ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
 
             // Label anzeigen
@@ -146,12 +151,19 @@ class RectDrawing{
         this.draw();
     }
 
-    setRects(rects){
+    setRects(rects,color='green'){
+        rects.forEach(element => {
+            element.color = color;
+        });
         this.rects = rects;
     }
 
     getRects(){
         return this.rects;
+    }
+
+    resetRect(){
+        this.rect = {};
     }
 }
 

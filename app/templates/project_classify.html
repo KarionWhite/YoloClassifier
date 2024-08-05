@@ -16,6 +16,10 @@
                 <option value="{{ label }}">{{ label }}</option>
             {% endfor %}
         </select>
+        <div class="btn-group">
+          <a id="back-to-edit-link" href="{{ url_for('edit_project_form', project_id=project.id) }}" class="btn btn-secondary">Zurück zum Editieren</a>
+          <button id="reset-rects-btn" class="btn btn-primary">Lösche Rects</button>
+        </div>
       </div>
       <div class="col-md-2 d-flex flex-column justify-content-center">
         <svg id="prev-image-btn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16" role="button" tabindex="0" display="none">
