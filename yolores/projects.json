@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Example",
+        "description": "This is an example project\r\nHallo",
+        "id": "example",
+        "path": "yolores/projects/example"
+    },
+    {
+        "id": "project2",
+        "name": "meins",
+        "description": "meins",
+        "path": "yolores/projects/project2"
+    }
+]
