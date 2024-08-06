@@ -1,0 +1,8 @@
+names:
+- ka
+- kp
+nc: 2
+path: .\
+task: detect
+train: ./training
+val: ./test
